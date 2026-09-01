@@ -27,7 +27,7 @@ function WpPage({ slug }) {
       .catch((err) => setError(err.message))
   }, [slug])
 
-  useStylesheet(page ? elementorCssUrl(page.id) : null)
+  const stylesheetLoaded = useStylesheet(page ? elementorCssUrl(page.id) : null)
 
   useEffect(() => {
     if (!page) return
@@ -46,17 +46,24 @@ function WpPage({ slug }) {
   useEffect(() => {
     if (!page || !containerRef.current) return
     const cleanupSlideshows = enhanceBackgroundSlideshows(containerRef.current)
-    const cleanupInstagram = enhanceInstagramFeed(containerRef.current)
     let cleanupGrids = () => {}
     enhanceMediaGrids(containerRef.current).then((fn) => {
       cleanupGrids = fn
     })
     return () => {
       cleanupSlideshows()
-      cleanupInstagram()
       cleanupGrids()
     }
   }, [page])
+
+  // Wartet auf das geladene Stylesheet, da die Instagram-Feed-Kacheln ihre
+  // Breite über CSS-Grid-Spalten aus genau dieser Datei beziehen - vor dem
+  // Laden hätte die Höhenmessung sonst eine falsche (zu große) Breite als
+  // Grundlage.
+  useEffect(() => {
+    if (!page || !containerRef.current || !stylesheetLoaded) return
+    return enhanceInstagramFeed(containerRef.current)
+  }, [page, stylesheetLoaded])
 
   if (error) {
     return <main className="wp-page-error">Fehler beim Laden der Seite: {error}</main>

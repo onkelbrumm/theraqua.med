@@ -25,9 +25,14 @@ export function enhanceInstagramFeed(root) {
     })
   }
 
-  applyHeights()
+  // Ein Frame abwarten, damit der Browser das gerade geladene Stylesheet
+  // sicher schon fürs Layout angewendet hat, bevor gemessen wird.
+  const rafId = requestAnimationFrame(applyHeights)
 
   const onResize = () => applyHeights()
   window.addEventListener('resize', onResize)
-  return () => window.removeEventListener('resize', onResize)
+  return () => {
+    cancelAnimationFrame(rafId)
+    window.removeEventListener('resize', onResize)
+  }
 }
