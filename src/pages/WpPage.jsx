@@ -45,6 +45,16 @@ function WpPage({ slug }) {
 
   useEffect(() => {
     if (!page || !containerRef.current) return
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((m) => {
+        m.removedNodes.forEach((n) => {
+          if (n.nodeType === 1 && n.classList?.contains('elementor-background-slideshow')) {
+            console.error('[WpPage] slideshow div removed!', m)
+          }
+        })
+      })
+    })
+    observer.observe(containerRef.current, { childList: true, subtree: true })
     console.log('[WpPage] running slideshow/grid effect for page', page.id)
     let cleanupSlideshows = () => {}
     try {
@@ -60,6 +70,7 @@ function WpPage({ slug }) {
       .catch((err) => console.error('[WpPage] enhanceMediaGrids threw', err))
     return () => {
       console.log('[WpPage] cleaning up slideshow/grid effect for page', page.id)
+      observer.disconnect()
       cleanupSlideshows()
       cleanupGrids()
     }
