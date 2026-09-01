@@ -45,12 +45,21 @@ function WpPage({ slug }) {
 
   useEffect(() => {
     if (!page || !containerRef.current) return
-    const cleanupSlideshows = enhanceBackgroundSlideshows(containerRef.current)
+    console.log('[WpPage] running slideshow/grid effect for page', page.id)
+    let cleanupSlideshows = () => {}
+    try {
+      cleanupSlideshows = enhanceBackgroundSlideshows(containerRef.current)
+    } catch (err) {
+      console.error('[WpPage] enhanceBackgroundSlideshows threw', err)
+    }
     let cleanupGrids = () => {}
-    enhanceMediaGrids(containerRef.current).then((fn) => {
-      cleanupGrids = fn
-    })
+    enhanceMediaGrids(containerRef.current)
+      .then((fn) => {
+        cleanupGrids = fn
+      })
+      .catch((err) => console.error('[WpPage] enhanceMediaGrids threw', err))
     return () => {
+      console.log('[WpPage] cleaning up slideshow/grid effect for page', page.id)
       cleanupSlideshows()
       cleanupGrids()
     }
