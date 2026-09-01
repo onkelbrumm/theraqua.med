@@ -4,9 +4,76 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>wp-react-template</title>
+    <title>Theraqua.med</title>
+
+    <!-- Google Fonts (aus dem WP-Theme übernommen) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Poppins:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Balsamiq+Sans:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto+Slab:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Allison:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic&display=swap"
+    />
+
+    <!-- Elementor / Royal Addons Basis-Styles, direkt vom WP-Backend geladen,
+         damit aus wp/v2/pages gerenderte Inhalte und Header/Footer korrekt aussehen -->
+    <!-- Lokal statt vom WP-Server geladen: Cross-Origin-Schriftdateien (Font
+         Awesome, lightGallery) werden vom Browser ohne CORS-Header blockiert -->
+    <link rel="stylesheet" href="/vendor/font-awesome/css/all.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/uploads/elementor/css/custom-frontend.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/uploads/elementor/css/base-desktop.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/uploads/elementor/css/base-mobile.css" media="(max-width:767px)" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/themes/royal-elementor-kit/style.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/uploads/elementor/css/post-6.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/uploads/elementor/css/post-371.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/uploads/elementor/css/post-666.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/css/widget-image.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/css/widget-heading.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/css/widget-divider.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/css/widget-social-icons.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/uploads/elementor/css/custom-widget-icon-list.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/uploads/elementor/css/custom-widget-image-box.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/lib/swiper/v8/css/swiper.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/css/conditionals/e-swiper.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/css/conditionals/shapes.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/lib/animations/styles/fadeInDown.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/lib/animations/styles/fadeIn.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/lib/animations/styles/zoomIn.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/lib/animations/styles/slideInUp.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/lib/animations/styles/slideInLeft.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/lib/animations/styles/slideInRight.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/elementor/assets/lib/animations/styles/e-animation-grow.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/royal-elementor-addons/assets/css/frontend.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/royal-elementor-addons/assets/css/lib/animations/wpr-animations.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/royal-elementor-addons/assets/css/lib/animations/wpr-link-animations.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/royal-elementor-addons/assets/css/lib/animations/loading-animations.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/royal-elementor-addons/assets/css/lib/animations/button-animations.min.css" />
+    <link rel="stylesheet" href="%VITE_API_URL%/wp-content/plugins/royal-elementor-addons/assets/css/lib/animations/text-animations.min.css" />
+    <link rel="stylesheet" href="/vendor/lightgallery/lightgallery.min.css" />
   </head>
-  <body>
+  <body class="elementor-kit-6 elementor-default">
+    <!-- elementor-kit-6: WordPress setzt diese Klasse normalerweise selbst
+         über body_class(). Ohne sie lösen die globalen Elementor-CSS-Variablen
+         (Farben, Schriften, u.a. die Footer-Hintergrundfarbe) nicht auf. -->
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
