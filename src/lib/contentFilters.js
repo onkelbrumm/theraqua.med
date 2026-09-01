@@ -17,5 +17,11 @@ export function filterContentHtml(html) {
   // Standard-Markup, das WordPress dafür automatisch erzeugt.
   doc.querySelectorAll('p.attachment').forEach((el) => el.remove())
 
+  // "Follow on Instagram"-Button zeigt noch auf den Demo-Account des
+  // Theme-Anbieters statt auf den echten Theraqua-Account.
+  doc.querySelectorAll('.wpr-instagram-follow-btn').forEach((el) => {
+    el.href = 'https://www.instagram.com/theraquamedhaan/'
+  })
+
   return doc.body.innerHTML
 }
