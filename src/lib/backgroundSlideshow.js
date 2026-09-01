@@ -36,12 +36,17 @@ function parseSlideshowSettings(el) {
 // Bildern, optional mit sanftem Ken-Burns-Zoom.
 export function enhanceBackgroundSlideshows(root) {
   const sections = root.querySelectorAll('[data-settings*="background_background"]')
+  console.log('[slideshow] sections found:', sections.length)
   const cleanups = []
 
   sections.forEach((section) => {
     const config = parseSlideshowSettings(section)
+    console.log('[slideshow] section', section.getAttribute('data-id'), 'config:', config)
     if (!config) return
-    if (section.querySelector(':scope > .elementor-background-slideshow')) return
+    if (section.querySelector(':scope > .elementor-background-slideshow')) {
+      console.log('[slideshow] already has slideshow, skipping')
+      return
+    }
 
     if (getComputedStyle(section).position === 'static') {
       section.style.position = 'relative'
@@ -58,6 +63,7 @@ export function enhanceBackgroundSlideshows(root) {
       )
       .join('')
     section.insertBefore(wrap, section.firstChild)
+    console.log('[slideshow] inserted, now present:', !!section.querySelector(':scope > .elementor-background-slideshow'))
 
     if (config.images.length > 1) {
       let index = 0
