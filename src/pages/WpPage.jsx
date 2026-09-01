@@ -45,16 +45,21 @@ function WpPage({ slug }) {
 
   useEffect(() => {
     if (!page || !containerRef.current) return
+    const watchedMain = containerRef.current
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((m) => {
         m.removedNodes.forEach((n) => {
-          if (n.nodeType === 1 && n.classList?.contains('elementor-background-slideshow')) {
-            console.error('[WpPage] slideshow div removed!', m)
+          if (n.nodeType !== 1) return
+          if (n.classList?.contains('elementor-background-slideshow')) {
+            console.error('[WpPage] slideshow div removed! target:', m.target, 'stack:', new Error().stack)
+          }
+          if (n === watchedMain || n.tagName === 'MAIN') {
+            console.error('[WpPage] <main> itself removed/replaced!', n, 'stack:', new Error().stack)
           }
         })
       })
     })
-    observer.observe(containerRef.current, { childList: true, subtree: true })
+    observer.observe(document.getElementById('root'), { childList: true, subtree: true })
     console.log('[WpPage] running slideshow/grid effect for page', page.id)
     let cleanupSlideshows = () => {}
     try {
