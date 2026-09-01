@@ -4,6 +4,7 @@ import { useStylesheet } from '../lib/useStylesheet'
 import { useInternalLinks } from '../lib/useInternalLinks'
 import { enhanceMediaGrids } from '../lib/mediaGrid'
 import { enhanceBackgroundSlideshows } from '../lib/backgroundSlideshow'
+import { enhanceInstagramFeed } from '../lib/instagramFeed'
 import { filterContentHtml } from '../lib/contentFilters'
 
 function WpPage({ slug }) {
@@ -45,12 +46,14 @@ function WpPage({ slug }) {
   useEffect(() => {
     if (!page || !containerRef.current) return
     const cleanupSlideshows = enhanceBackgroundSlideshows(containerRef.current)
+    const cleanupInstagram = enhanceInstagramFeed(containerRef.current)
     let cleanupGrids = () => {}
     enhanceMediaGrids(containerRef.current).then((fn) => {
       cleanupGrids = fn
     })
     return () => {
       cleanupSlideshows()
+      cleanupInstagram()
       cleanupGrids()
     }
   }, [page])
