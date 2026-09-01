@@ -30,54 +30,74 @@ function parseSlideshowSettings(el) {
   }
 }
 
+function buildSlideshowEl(config) {
+  const wrap = document.createElement('div')
+  wrap.className = 'elementor-background-slideshow'
+  wrap.innerHTML = config.images
+    .map(
+      (url, i) =>
+        `<div class="elementor-background-slideshow__slide wpr-bg-slide${i === 0 ? ' wpr-bg-slide-active' : ''}">
+           <div class="elementor-background-slideshow__slide__image wpr-bg-slide-image${config.kenBurns ? ' wpr-bg-slide-kenburns' : ''}" style="background-image:url('${url}')"></div>
+         </div>`,
+    )
+    .join('')
+  return wrap
+}
+
 // Elementor rendert diesen Hintergrund normalerweise per JS (Swiper) - im
 // content.rendered HTML steckt nur die Konfiguration in data-settings, keine
 // <img>-Elemente. Wir bauen die Diashow selbst nach: crossfade zwischen den
 // Bildern, optional mit sanftem Ken-Burns-Zoom.
+//
+// Auf manchen Produktions-Loads wurde die eingefügte Diashow kurz nach dem
+// Einfügen wieder aus dem DOM entfernt (vermutlich ein erneuter Reconcile
+// von dangerouslySetInnerHTML). Ein MutationObserver fragt die Sektionen
+// daher bei jeder Korrektur frisch vom Root ab, statt einmalig eingefangene
+// Elementreferenzen weiterzuverwenden, die dabei veralten könnten.
 export function enhanceBackgroundSlideshows(root) {
-  const sections = root.querySelectorAll('[data-settings*="background_background"]')
-  console.log('[slideshow] sections found:', sections.length)
-  const cleanups = []
+  if (!root.querySelector('[data-settings*="background_background"]')) return () => {}
 
-  sections.forEach((section) => {
-    const config = parseSlideshowSettings(section)
-    console.log('[slideshow] section', section.getAttribute('data-id'), 'config:', config)
-    if (!config) return
-    if (section.querySelector(':scope > .elementor-background-slideshow')) {
-      console.log('[slideshow] already has slideshow, skipping')
-      return
-    }
+  const timers = new Set()
 
-    if (getComputedStyle(section).position === 'static') {
-      section.style.position = 'relative'
-    }
+  function ensureAll() {
+    root.querySelectorAll('[data-settings*="background_background"]').forEach((section) => {
+      const config = parseSlideshowSettings(section)
+      if (!config) return
+      if (section.querySelector(':scope > .elementor-background-slideshow')) return
 
-    const wrap = document.createElement('div')
-    wrap.className = 'elementor-background-slideshow'
-    wrap.innerHTML = config.images
-      .map(
-        (url, i) =>
-          `<div class="elementor-background-slideshow__slide wpr-bg-slide${i === 0 ? ' wpr-bg-slide-active' : ''}">
-             <div class="elementor-background-slideshow__slide__image wpr-bg-slide-image${config.kenBurns ? ' wpr-bg-slide-kenburns' : ''}" style="background-image:url('${url}')"></div>
-           </div>`,
-      )
-      .join('')
-    section.insertBefore(wrap, section.firstChild)
-    console.log('[slideshow] inserted, now present:', !!section.querySelector(':scope > .elementor-background-slideshow'))
+      if (getComputedStyle(section).position === 'static') {
+        section.style.position = 'relative'
+      }
 
-    if (config.images.length > 1) {
-      let index = 0
-      const slides = wrap.querySelectorAll('.wpr-bg-slide')
-      const timer = setInterval(() => {
-        slides[index].classList.remove('wpr-bg-slide-active')
-        index = (index + 1) % slides.length
-        slides[index].classList.add('wpr-bg-slide-active')
-      }, config.duration)
-      cleanups.push(() => clearInterval(timer))
-    }
+      const wrap = buildSlideshowEl(config)
+      section.insertBefore(wrap, section.firstChild)
 
-    cleanups.push(() => wrap.remove())
-  })
+      if (config.images.length > 1) {
+        let index = 0
+        const slides = wrap.querySelectorAll('.wpr-bg-slide')
+        const timer = setInterval(() => {
+          slides[index].classList.remove('wpr-bg-slide-active')
+          index = (index + 1) % slides.length
+          slides[index].classList.add('wpr-bg-slide-active')
+        }, config.duration)
+        timers.add(timer)
+      }
+    })
+  }
 
-  return () => cleanups.forEach((fn) => fn())
+  ensureAll()
+
+  const observer = new MutationObserver(() => ensureAll())
+  observer.observe(root, { childList: true, subtree: true })
+
+  // Zusätzliches Sicherheitsnetz für den Fall, dass der Reset auf eine Art
+  // passiert, die der MutationObserver nicht als childList-Änderung erfasst.
+  const pollId = setInterval(ensureAll, 1000)
+
+  return () => {
+    observer.disconnect()
+    clearInterval(pollId)
+    timers.forEach((t) => clearInterval(t))
+    root.querySelectorAll('.elementor-background-slideshow').forEach((el) => el.remove())
+  }
 }

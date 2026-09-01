@@ -45,37 +45,12 @@ function WpPage({ slug }) {
 
   useEffect(() => {
     if (!page || !containerRef.current) return
-    const watchedMain = containerRef.current
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((m) => {
-        m.removedNodes.forEach((n) => {
-          if (n.nodeType !== 1) return
-          if (n.classList?.contains('elementor-background-slideshow')) {
-            console.error('[WpPage] slideshow div removed! target:', m.target, 'stack:', new Error().stack)
-          }
-          if (n === watchedMain || n.tagName === 'MAIN') {
-            console.error('[WpPage] <main> itself removed/replaced!', n, 'stack:', new Error().stack)
-          }
-        })
-      })
-    })
-    observer.observe(document.getElementById('root'), { childList: true, subtree: true })
-    console.log('[WpPage] running slideshow/grid effect for page', page.id)
-    let cleanupSlideshows = () => {}
-    try {
-      cleanupSlideshows = enhanceBackgroundSlideshows(containerRef.current)
-    } catch (err) {
-      console.error('[WpPage] enhanceBackgroundSlideshows threw', err)
-    }
+    const cleanupSlideshows = enhanceBackgroundSlideshows(containerRef.current)
     let cleanupGrids = () => {}
-    enhanceMediaGrids(containerRef.current)
-      .then((fn) => {
-        cleanupGrids = fn
-      })
-      .catch((err) => console.error('[WpPage] enhanceMediaGrids threw', err))
+    enhanceMediaGrids(containerRef.current).then((fn) => {
+      cleanupGrids = fn
+    })
     return () => {
-      console.log('[WpPage] cleaning up slideshow/grid effect for page', page.id)
-      observer.disconnect()
       cleanupSlideshows()
       cleanupGrids()
     }
