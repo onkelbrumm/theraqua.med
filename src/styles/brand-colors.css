@@ -812,3 +812,8 @@ body[data-elementor-device-mode=mobile] .elementor-7 .elementor-element.elemento
 .site-footer.site-footer.site-footer .elementor-widget-text-editor p a:hover {
   color: #ffffff !important;
 }
+
+/* Footer ohne abgerundete obere Ecken. */
+.elementor-666 .elementor-element.elementor-element-54d0707 {
+  border-radius: 0 !important;
+}
