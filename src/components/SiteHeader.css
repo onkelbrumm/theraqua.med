@@ -1,3 +1,7 @@
 .site-header .wpr-mobile-nav-menu {
   display: none;
+  position: fixed !important;
+  width: 90vw !important;
+  left: 5vw !important;
+  right: auto !important;
 }
